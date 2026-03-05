@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { updateWatchStatus } from '@/lib/db';
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const id = parseInt(params.id, 10);
+        const { id: paramId } = await params;
+        const id = parseInt(paramId, 10);
         const { watch_status } = await req.json();
 
         if (isNaN(id) || !watch_status) {
