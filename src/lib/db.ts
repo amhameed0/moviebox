@@ -1,10 +1,16 @@
-import { neon } from '@neondatabase/serverless';
+import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL environment variable is exactly required.');
+let _sql: NeonQueryFunction<false, false> | null = null;
+
+function getSQL() {
+    if (!_sql) {
+        if (!process.env.DATABASE_URL) {
+            throw new Error('DATABASE_URL environment variable is required.');
+        }
+        _sql = neon(process.env.DATABASE_URL);
+    }
+    return _sql;
 }
-
-const sql = neon(process.env.DATABASE_URL);
 
 export interface MovieRecord {
     id?: number;
@@ -23,6 +29,7 @@ export interface MovieRecord {
 }
 
 export async function saveMovie(movie: MovieRecord): Promise<MovieRecord> {
+    const sql = getSQL();
     const result = await sql`
     INSERT INTO movies (
       tiktok_url, title, tmdb_id, poster_url, synopsis,
@@ -40,6 +47,7 @@ export async function saveMovie(movie: MovieRecord): Promise<MovieRecord> {
 }
 
 export async function getMovies(): Promise<MovieRecord[]> {
+    const sql = getSQL();
     const result = await sql`
     SELECT * FROM movies
     ORDER BY created_at DESC;
@@ -48,6 +56,7 @@ export async function getMovies(): Promise<MovieRecord[]> {
 }
 
 export async function updateWatchStatus(id: number, status: string): Promise<void> {
+    const sql = getSQL();
     await sql`
     UPDATE movies
     SET watch_status = ${status}
