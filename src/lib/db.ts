@@ -63,3 +63,11 @@ export async function updateWatchStatus(id: number, status: string): Promise<voi
     WHERE id = ${id};
   `;
 }
+
+export async function deleteMovie(id: number): Promise<void> {
+    const sql = getSQL();
+    await sql`
+    DELETE FROM movies
+    WHERE id = ${id};
+  `;
+}

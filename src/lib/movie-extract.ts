@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateObject, generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
@@ -64,4 +64,70 @@ ${transcript}
         console.error('Transcript Extraction error:', error);
         return { movieTitle: null, confidence: 'no_movie' };
     }
+}
+
+export async function extractMoviesFromSlideshow(
+    imageBuffers: Buffer[],
+    postDescription: string
+): Promise<{
+    movies: Array<{
+        title: string;
+        confidence: "complete" | "partial";
+        context?: string;
+    }>;
+}> {
+    const content: Array<
+        | { type: "text"; text: string }
+        | { type: "image"; image: Uint8Array }
+    > = [
+        {
+            type: "text",
+            text: `You are a movie identification assistant. The following images are slides from a TikTok slideshow post about movies or TV shows.
+
+Post description/caption: "${postDescription}"
+
+Analyze ALL slides carefully. Extract EVERY movie or TV show title visible in the images. Look for:
+- Movie/show titles in text overlays
+- Movie posters (identify the movie from the poster)
+- Movie stills or screenshots (identify from recognizable scenes, actors, or visual cues)
+- Lists of recommendations
+- Any text mentioning specific titles
+
+Respond with JSON only, no markdown:
+{
+  "movies": [
+    {
+      "title": "Exact Movie or Show Title",
+      "confidence": "complete" or "partial",
+      "context": "optional extra info visible (e.g. 'on Netflix', '2024', 'horror')"
+    }
+  ]
+}
+
+Rules:
+- Return every distinct movie/show found across all slides
+- Use the official title (e.g. "The Shawshank Redemption" not "Shawshank")
+- "complete" = clearly readable title or unmistakable poster
+- "partial" = you can make out most of it but aren't 100% sure
+- Do NOT hallucinate titles. If a slide has no identifiable movie, skip it.
+- If no movies found in any slide, return { "movies": [] }`,
+        },
+    ];
+
+    for (const buf of imageBuffers) {
+        content.push({
+            type: "image",
+            image: new Uint8Array(buf),
+        });
+    }
+
+    const { text } = await generateText({
+        model: openai("gpt-4o-mini"),
+        messages: [{ role: "user", content }],
+    });
+
+    const parsed = JSON.parse(text);
+    return {
+        movies: Array.isArray(parsed.movies) ? parsed.movies : [],
+    };
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Star, Eye, EyeOff, Loader2, X } from 'lucide-react';
+import { Star, Eye, EyeOff, Loader2, X, Trash2 } from 'lucide-react';
 
 export default function LibraryPage() {
     const [movies, setMovies] = useState<any[]>([]);
@@ -36,6 +36,21 @@ export default function LibraryPage() {
         } catch {
             // revert on failure
             setMovies(prev => prev.map(m => m.id === movie.id ? { ...m, watch_status: movie.watch_status } : m));
+        }
+    };
+
+    const handleDelete = async (e: React.MouseEvent, movie: any) => {
+        e.stopPropagation();
+        if (!confirm(`Delete "${movie.title}" from your library?`)) return;
+
+        setMovies(prev => prev.filter(m => m.id !== movie.id));
+        if (selectedMovie?.id === movie.id) setSelectedMovie(null);
+
+        try {
+            const res = await fetch(`/api/movies/${movie.id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to delete');
+        } catch {
+            setMovies(prev => [...prev, movie]);
         }
     };
 
@@ -94,8 +109,16 @@ export default function LibraryPage() {
                                     <div className="w-full h-full bg-slate-800 flex items-center justify-center">No Poster</div>
                                 )}
 
+                                <button
+                                    onClick={(e) => handleDelete(e, movie)}
+                                    className="absolute top-2 right-2 bg-slate-900/70 text-slate-400 hover:text-red-400 hover:bg-red-500/20 p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all z-10"
+                                    title="Delete movie"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+
                                 {movie.watch_status === 'watched' && (
-                                    <div className="absolute top-2 right-2 bg-emerald-500 text-white p-1.5 rounded-full shadow-md">
+                                    <div className="absolute top-2 left-2 bg-emerald-500 text-white p-1.5 rounded-full shadow-md">
                                         <Eye className="w-4 h-4" />
                                     </div>
                                 )}
