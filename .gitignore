@@ -34,8 +34,8 @@ yarn-error.log*
 .env*
 
 #VSCode and Claude
-.vscode/
-.claude/
+.vscode
+.claude
 
 # vercel
 .vercel
