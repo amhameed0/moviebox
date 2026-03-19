@@ -19,12 +19,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex flex-col min-h-screen">
           <header className="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <a href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-xl">
                 M
               </div>
               <span className="text-xl font-bold tracking-tight text-white">MovieBox</span>
-            </div>
+            </a>
             <nav>
               <a href="/library" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                 Library
