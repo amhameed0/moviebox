@@ -57,6 +57,7 @@ export default function LibraryPage() {
     const filteredMovies = movies.filter(m => filter === 'all' ? true : m.watch_status === filter);
 
     return (
+        <>
         <div className="max-w-6xl mx-auto animate-fade-in-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
@@ -136,7 +137,9 @@ export default function LibraryPage() {
                 </div>
             )}
 
-            {/* Modal */}
+        </div>
+
+            {/* Modal — outside animated div so fixed positioning works relative to viewport */}
             {selectedMovie && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setSelectedMovie(null)} />
@@ -190,6 +193,6 @@ export default function LibraryPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }
