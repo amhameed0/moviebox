@@ -166,6 +166,57 @@ export default function LibraryPage() {
                                 )}
                             </div>
 
+                            {selectedMovie.watch_providers && (selectedMovie.watch_providers.stream?.length > 0 || selectedMovie.watch_providers.rent?.length > 0 || selectedMovie.watch_providers.buy?.length > 0) && (() => {
+                                const wp = selectedMovie.watch_providers;
+                                const hasStream = wp.stream?.length > 0;
+                                const rentBuy = [...(wp.rent || []), ...(wp.buy || [])].filter(
+                                    (p: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.provider_id === p.provider_id) === i
+                                );
+                                const hasRentBuy = rentBuy.length > 0;
+
+                                return (
+                                    <div className="mb-4">
+                                        {hasStream && (
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xs text-slate-400 shrink-0">Stream</span>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {wp.stream.map((p: any) => (
+                                                        <img
+                                                            key={p.provider_id}
+                                                            src={`https://image.tmdb.org/t/p/original${p.logo_path}`}
+                                                            alt={p.provider_name}
+                                                            title={p.provider_name}
+                                                            className="w-7 h-7 rounded-[7px]"
+                                                            style={{ border: '0.5px solid rgba(255,255,255,0.1)' }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {hasStream && hasRentBuy && (
+                                            <hr className="border-0 h-px bg-slate-700/50 my-2" />
+                                        )}
+                                        {hasRentBuy && (
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xs text-slate-400 shrink-0">Rent / Buy</span>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {rentBuy.map((p: any) => (
+                                                        <img
+                                                            key={p.provider_id}
+                                                            src={`https://image.tmdb.org/t/p/original${p.logo_path}`}
+                                                            alt={p.provider_name}
+                                                            title={p.provider_name}
+                                                            className="w-7 h-7 rounded-[7px]"
+                                                            style={{ border: '0.5px solid rgba(255,255,255,0.1)' }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
+
                             <div className="flex flex-wrap gap-2 mb-4">
                                 {selectedMovie.genres?.map((g: string) => (
                                     <span key={g} className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300">{g}</span>

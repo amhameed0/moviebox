@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS movies (
   watch_status TEXT DEFAULT 'want_to_watch',
   confidence TEXT NOT NULL,
   raw_metadata JSONB,
+  watch_providers JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

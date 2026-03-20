@@ -12,6 +12,18 @@ function getSQL() {
     return _sql;
 }
 
+export type Provider = {
+    provider_id: number;
+    provider_name: string;
+    logo_path: string;
+};
+
+export type WatchProviders = {
+    stream: Provider[];
+    rent: Provider[];
+    buy: Provider[];
+};
+
 export interface MovieRecord {
     id?: number;
     tiktok_url: string;
@@ -23,6 +35,7 @@ export interface MovieRecord {
     genres: string[] | null;
     imdb_rating: number | null;
     watch_status?: string; // 'want_to_watch', 'watched', etc.
+    watch_providers?: WatchProviders | null;
     confidence: string;
     raw_metadata?: any;
     created_at?: string | Date;
@@ -34,11 +47,12 @@ export async function saveMovie(movie: MovieRecord): Promise<MovieRecord> {
     INSERT INTO movies (
       tiktok_url, title, tmdb_id, poster_url, synopsis,
       release_year, genres, imdb_rating, watch_status,
-      confidence, raw_metadata
+      confidence, raw_metadata, watch_providers
     ) VALUES (
       ${movie.tiktok_url}, ${movie.title}, ${movie.tmdb_id}, ${movie.poster_url}, ${movie.synopsis},
       ${movie.release_year}, ${movie.genres as any}, ${movie.imdb_rating}, ${movie.watch_status || 'want_to_watch'},
-      ${movie.confidence}, ${movie.raw_metadata ? JSON.stringify(movie.raw_metadata) : null}
+      ${movie.confidence}, ${movie.raw_metadata ? JSON.stringify(movie.raw_metadata) : null},
+      ${movie.watch_providers ? JSON.stringify(movie.watch_providers) : null}
     )
     RETURNING *;
   `;
