@@ -12,6 +12,7 @@ interface MovieResult {
     release_year: number | null;
     genres: string[];
     imdb_rating: number | null;
+    watch_providers?: { stream: any[]; rent: any[]; buy: any[] } | null;
     confidence: string;
     context: string | null;
     source: string;
@@ -86,6 +87,7 @@ export default function ReviewPage() {
                     genres: movie.genres,
                     imdb_rating: movie.imdb_rating,
                     confidence: movie.confidence,
+                    watch_providers: movie.watch_providers,
                     raw_metadata: data.raw_metadata,
                 };
                 const res = await fetch('/api/save', {
@@ -244,6 +246,7 @@ export default function ReviewPage() {
                     genres: movie.genres,
                     imdb_rating: movie.imdb_rating,
                     confidence: movie.confidence,
+                    watch_providers: movie.watch_providers,
                     raw_metadata: data.raw_metadata,
                 }));
 
