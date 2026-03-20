@@ -168,10 +168,20 @@ export default function LibraryPage() {
 
                             {selectedMovie.watch_providers && (selectedMovie.watch_providers.stream?.length > 0 || selectedMovie.watch_providers.rent?.length > 0 || selectedMovie.watch_providers.buy?.length > 0) && (() => {
                                 const wp = selectedMovie.watch_providers;
-                                const hasStream = wp.stream?.length > 0;
-                                const rentBuy = [...(wp.rent || []), ...(wp.buy || [])].filter(
-                                    (p: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.provider_id === p.provider_id) === i
-                                );
+                                const baseProviderName = (name: string) =>
+                                    name.replace(/\s*(Premium Plus|Premium|Standard with Ads|with Ads|Amazon Channel|Apple TV Channel|On Demand)\s*/gi, '').trim();
+                                const dedup = (arr: any[]) => {
+                                    const seen = new Set<string>();
+                                    return arr.filter((p: any) => {
+                                        const base = baseProviderName(p.provider_name);
+                                        if (seen.has(base)) return false;
+                                        seen.add(base);
+                                        return true;
+                                    });
+                                };
+                                const stream = dedup(wp.stream || []);
+                                const hasStream = stream.length > 0;
+                                const rentBuy = dedup([...(wp.rent || []), ...(wp.buy || [])]);
                                 const hasRentBuy = rentBuy.length > 0;
 
                                 return (
@@ -180,7 +190,7 @@ export default function LibraryPage() {
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xs text-slate-400 shrink-0">Stream</span>
                                                 <div className="flex flex-wrap gap-1.5">
-                                                    {wp.stream.map((p: any) => (
+                                                    {stream.map((p: any) => (
                                                         <img
                                                             key={p.provider_id}
                                                             src={`https://image.tmdb.org/t/p/original${p.logo_path}`}
