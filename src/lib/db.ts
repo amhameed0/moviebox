@@ -78,6 +78,15 @@ export async function updateWatchStatus(id: number, status: string): Promise<voi
   `;
 }
 
+export async function updateWatchProviders(id: number, providers: WatchProviders): Promise<void> {
+    const sql = getSQL();
+    await sql`
+    UPDATE movies
+    SET watch_providers = ${JSON.stringify(providers)}
+    WHERE id = ${id};
+  `;
+}
+
 export async function deleteMovie(id: number): Promise<void> {
     const sql = getSQL();
     await sql`
