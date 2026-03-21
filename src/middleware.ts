@@ -23,6 +23,9 @@ export function middleware(request: NextRequest) {
     const devPasswordCookie = request.cookies.get('dev_password')?.value;
 
     if (devPasswordCookie !== password) {
+        if (pathname.startsWith('/api')) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         const url = request.nextUrl.clone();
         url.pathname = '/login';
         return NextResponse.redirect(url);
@@ -32,5 +35,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|login).*)'],
+    matcher: ['/((?!_next/static|_next/image|favicon.ico|login).*)'],
 };
