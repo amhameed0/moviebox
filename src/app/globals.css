@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Prevent iOS overscroll bounce for app-like feel */
+html {
+  overscroll-behavior: none;
+}
+
 :root {
   --background: #0f172a;
   --foreground: #f8fafc;
@@ -19,6 +24,11 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
+  /* Safe area insets for iOS standalone mode (notch / Dynamic Island) */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   /* subtle radial gradient for premium feel */
   background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 400px),
     radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.1), transparent 400px);

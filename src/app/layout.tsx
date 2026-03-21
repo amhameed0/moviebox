@@ -1,12 +1,32 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { ServiceWorkerRegistrar } from './components/ServiceWorkerRegistrar';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
+export const viewport: Viewport = {
+  themeColor: '#8b5cf6',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+};
+
 export const metadata: Metadata = {
   title: 'MovieBox',
   description: 'Extract movie recommendations from TikTok',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'MovieBox',
+  },
+  icons: {
+    icon: '/icons/icon-192.png',
+    apple: '/icons/icon-180.png',
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +55,7 @@ export default function RootLayout({
             {children}
           </main>
         </div>
+        <ServiceWorkerRegistrar />
       </body>
     </html>
   );
